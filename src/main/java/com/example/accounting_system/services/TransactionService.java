@@ -4,7 +4,9 @@ import com.example.accounting_system.dtos.TransactionDto;
 import com.example.accounting_system.entities.Transaction;
 import com.example.accounting_system.repositories.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,11 +15,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
+    private final RestTemplate restTemplate;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
         if (transactionDto.getCategory().equals("outcome")) {
+            checkTransactionAmount(transactionDto.getAmount());
             transactionDto.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
         }
+        System.out.println(getTotalBalance());
         return transactionRepository.save(convertToTransaction(transactionDto));
     }
 
@@ -25,6 +30,7 @@ public class TransactionService {
         Transaction existTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
         if (transactionDto.getCategory().equals("outcome")) {
+            checkTransactionAmount(transactionDto.getAmount());
             existTransaction.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
         }
         existTransaction.setCategory(transactionDto.getCategory());
@@ -63,4 +69,25 @@ public class TransactionService {
         transaction.setComment(transactionDto.getComment());
         return transaction;
     }
+
+    // Get total balance from GetMapping(
+    public BigDecimal getTotalBalance() {
+        ResponseEntity<BigDecimal> response = restTemplate.getForEntity("http://localhost:8080/api/v1/transaction/balance", BigDecimal.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to retrieve total balance: " + response.getStatusCode());
+        }
+    }
+
+    // Check if transaction amount greater than total balance
+    public void checkTransactionAmount(BigDecimal transactionAmount) {
+        BigDecimal totalBalance = getTotalBalance();
+
+        if (totalBalance.compareTo(BigDecimal.ZERO) == 0 || transactionAmount.compareTo(totalBalance) > 0) {
+            throw new RuntimeException("Invalid transaction amount");
+        }
+    }
+
+
 }
