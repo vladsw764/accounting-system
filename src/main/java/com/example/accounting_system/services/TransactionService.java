@@ -15,13 +15,18 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
+        if (transactionDto.getCategory().equals("outcome")) {
+            transactionDto.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
+        }
         return transactionRepository.save(convertToTransaction(transactionDto));
     }
 
     public Transaction updateTransaction(Long transactionId, TransactionDto transactionDto) {
         Transaction existTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
-        existTransaction.setAmount(transactionDto.getAmount());
+        if (transactionDto.getCategory().equals("outcome")) {
+            existTransaction.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
+        }
         existTransaction.setCategory(transactionDto.getCategory());
         existTransaction.setDate(transactionDto.getDate());
         existTransaction.setComment(transactionDto.getComment());
