@@ -37,29 +37,37 @@ public class PaymentService {
     }
 
     public Payment updatePayment(Long debtId, Long paymentId, PaymentDto paymentDto) {
-        // Find the debt by ID
         Debt debt = debtRepository.findById(debtId)
                 .orElseThrow(() -> new RuntimeException("Debt not found with ID: " + debtId));
 
-        // Find the payment by ID
-        Payment existingPayment = paymentRepository.findById(paymentId)
+        Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + paymentId));
 
-        // Update the payment date with new values
-        existingPayment.setDate(paymentDto.getDate());
-
-        BigDecimal newAmount = (existingPayment.getAmount().compareTo(paymentDto.getAmount())) < 0
-                ? paymentDto.getAmount().subtract(existingPayment.getAmount())
-                : paymentDto.getAmount().add(existingPayment.getAmount());
-        debt.setReturnAmount(newAmount);
-
-        // Update the payment amount with new values
-        existingPayment.setAmount(paymentDto.getAmount());
-
+        validatePaymentBelongsToDebt(payment, debt);
+        BigDecimal previousPaymentAmount = payment.getAmount();
+        updatePaymentFields(payment, paymentDto);
+        BigDecimal newPaymentAmount = payment.getAmount();
+        updateDebtReturnAmount(debt, previousPaymentAmount, newPaymentAmount);
         debtRepository.save(debt);
+        return paymentRepository.save(payment);
+    }
 
-        // Save the updated payment
-        return paymentRepository.save(existingPayment);
+    private void validatePaymentBelongsToDebt(Payment payment, Debt debt) {
+        if (!payment.getDebt().equals(debt)) {
+            throw new IllegalArgumentException("Payment does not belong to the specified debt.");
+        }
+    }
+
+    private void updatePaymentFields(Payment payment, PaymentDto paymentDto) {
+        payment.setDate(paymentDto.getDate());
+        payment.setAmount(paymentDto.getAmount());
+    }
+
+    private void updateDebtReturnAmount(Debt debt, BigDecimal previousPaymentAmount, BigDecimal newPaymentAmount) {
+        BigDecimal returnAmountDifference = newPaymentAmount.subtract(previousPaymentAmount);
+        BigDecimal currentReturnAmount = debt.getReturnAmount();
+        BigDecimal newReturnAmount = currentReturnAmount.subtract(returnAmountDifference);
+        debt.setReturnAmount(newReturnAmount);
     }
 
 }
