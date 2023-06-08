@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,8 @@ public class PaymentService {
         Debt debt = debtRepository.findById(debtId)
                 .orElseThrow(() -> new RuntimeException("Debt not found with ID: " + debtId));
 
+        checkReturnAmount(paymentDto.getAmount(), debt.getReturnAmount());
+
         // Create a new payment
         Payment payment = new Payment();
         payment.setDebt(debt);
@@ -34,6 +37,17 @@ public class PaymentService {
 
         // Save the payment
         return paymentRepository.save(payment);
+    }
+
+    public BigDecimal getCurrentBalance() {
+        List<Payment> payments = paymentRepository.findAll();
+        BigDecimal balance = BigDecimal.ZERO;
+
+        for (Payment payment : payments) {
+            balance = balance.subtract(payment.getAmount());
+        }
+
+        return balance;
     }
 
     public Payment updatePayment(Long debtId, Long paymentId, PaymentDto paymentDto) {
@@ -50,6 +64,12 @@ public class PaymentService {
         updateDebtReturnAmount(debt, previousPaymentAmount, newPaymentAmount);
         debtRepository.save(debt);
         return paymentRepository.save(payment);
+    }
+
+    private void checkReturnAmount(BigDecimal newReturnAmount, BigDecimal receivedAmount) {
+        if (newReturnAmount.compareTo(receivedAmount) > 0) {
+            throw new IllegalArgumentException("The return amount cannot exceed the received amount.");
+        }
     }
 
     private void validatePaymentBelongsToDebt(Payment payment, Debt debt) {

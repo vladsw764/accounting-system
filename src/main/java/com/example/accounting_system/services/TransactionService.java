@@ -6,6 +6,7 @@ import com.example.accounting_system.repositories.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -31,8 +32,19 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
+    public BigDecimal getCurrentBalance() {
+        List<Transaction> transactions = transactionRepository.findAll();
+        BigDecimal balance = BigDecimal.ZERO;
+
+        for (Transaction transaction : transactions) {
+            balance = balance.add(transaction.getAmount());
+        }
+
+        return balance;
+    }
+
     public void removeTransactionFromHistory(Long transactionId) {
-        Transaction existTransaction = transactionRepository.findById(transactionId)
+        transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
 
         transactionRepository.deleteById(transactionId);

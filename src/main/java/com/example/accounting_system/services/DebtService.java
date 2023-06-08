@@ -6,6 +6,7 @@ import com.example.accounting_system.repositories.DebtRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -19,6 +20,17 @@ public class DebtService {
         Debt debt = convertToDebt(debtDto);
         // Save the debt
         return debtRepository.save(debt);
+    }
+
+    public BigDecimal getCurrentBalance() {
+        List<Debt> debts = debtRepository.findAll();
+        BigDecimal balance = BigDecimal.ZERO;
+
+        for (Debt debt : debts) {
+            balance = balance.add(debt.getReceivedAmount()).subtract(debt.getReturnAmount());
+        }
+
+        return balance;
     }
 
     public Debt updateDebt(Long debtId, DebtDto debtDto) {
