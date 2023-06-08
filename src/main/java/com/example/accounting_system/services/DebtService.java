@@ -27,7 +27,7 @@ public class DebtService {
         BigDecimal balance = BigDecimal.ZERO;
 
         for (Debt debt : debts) {
-            balance = balance.add(debt.getReceivedAmount()).subtract(debt.getReturnAmount());
+            balance = balance.add(debt.getReceivedAmount());
         }
 
         return balance;
