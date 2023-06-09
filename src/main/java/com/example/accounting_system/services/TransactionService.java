@@ -5,6 +5,7 @@ import com.example.accounting_system.entities.Transaction;
 import com.example.accounting_system.repositories.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,8 @@ import java.util.List;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final RestTemplate restTemplate;
+    @Value("${server.url}")
+    private final String url;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
         log.warn("check category of transaction");
@@ -77,7 +80,7 @@ public class TransactionService {
 
     // Get total balance from GetMapping(
     public BigDecimal getTotalBalance() {
-        ResponseEntity<BigDecimal> response = restTemplate.getForEntity("http://localhost:8080/api/v1/transaction/balance", BigDecimal.class);
+        ResponseEntity<BigDecimal> response = restTemplate.getForEntity(url + "/api/v1/transaction/balance", BigDecimal.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
         } else {

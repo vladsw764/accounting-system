@@ -7,3 +7,6 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+
+server:
+  url: http://localhost:8080
