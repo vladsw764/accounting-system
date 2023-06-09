@@ -20,7 +20,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final RestTemplate restTemplate;
     @Value("${server.url}")
-    private final String url;
+    private String url;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
         log.warn("check category of transaction");
