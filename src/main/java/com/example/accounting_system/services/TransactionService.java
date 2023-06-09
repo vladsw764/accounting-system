@@ -4,6 +4,7 @@ import com.example.accounting_system.dtos.TransactionDto;
 import com.example.accounting_system.entities.Transaction;
 import com.example.accounting_system.repositories.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,17 +13,21 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final RestTemplate restTemplate;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
+        log.warn("check category of transaction");
         if (transactionDto.getCategory().equals("outcome")) {
+            log.warn("check transaction amount");
             checkTransactionAmount(transactionDto.getAmount());
+            log.warn("multiply amount by 1");
             transactionDto.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
         }
-        System.out.println(getTotalBalance());
+        log.info("ready to save transaction");
         return transactionRepository.save(convertToTransaction(transactionDto));
     }
 
