@@ -7,7 +7,6 @@ import com.example.accounting_system.entities.Payment;
 import com.example.accounting_system.services.DebtService;
 import com.example.accounting_system.services.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
