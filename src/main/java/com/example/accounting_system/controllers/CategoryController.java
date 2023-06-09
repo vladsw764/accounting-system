@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -16,13 +15,9 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class CategoryController {
     private final CategoryService categoryService;
+
     @GetMapping("/{category}")
     public ResponseEntity<List<Object>> getAllByCategory(@PathVariable("category") String category) {
         return ResponseEntity.ok(categoryService.getTransactionsAndDebtsByCategory(category));
-    }
-
-    @GetMapping("/balance")
-    public ResponseEntity<BigDecimal> getCurrentBalance() {
-        return ResponseEntity.ok(categoryService.getCurrentBalance());
     }
 }
