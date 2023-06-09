@@ -33,6 +33,9 @@ public class PaymentService {
         payment.setAmount(paymentDto.getAmount());
 
         debt.setReturnAmount(debt.getReturnAmount().subtract(payment.getAmount()));
+        if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            debt.setDebtStatus(true);
+        }
         debtRepository.save(debt);
 
         // Save the payment
@@ -62,6 +65,9 @@ public class PaymentService {
         updatePaymentFields(payment, paymentDto);
         BigDecimal newPaymentAmount = payment.getAmount();
         updateDebtReturnAmount(debt, previousPaymentAmount, newPaymentAmount);
+        if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            debt.setDebtStatus(true);
+        }
         debtRepository.save(debt);
         return paymentRepository.save(payment);
     }
