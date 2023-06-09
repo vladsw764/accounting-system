@@ -18,5 +18,6 @@ public class DebtDto {
     private BigDecimal receivedAmount;
     private BigDecimal returnAmount;
     private double periodicPayment;
+    private boolean debtStatus; // true if the debt is closed
     private String reminder;
 }
