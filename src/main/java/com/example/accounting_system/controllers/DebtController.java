@@ -1,6 +1,7 @@
 package com.example.accounting_system.controllers;
 
 import com.example.accounting_system.dtos.DebtDto;
+import com.example.accounting_system.dtos.NotificationDto;
 import com.example.accounting_system.dtos.PaymentDto;
 import com.example.accounting_system.entities.Debt;
 import com.example.accounting_system.entities.Payment;
@@ -27,10 +28,10 @@ public class DebtController {
         return new ResponseEntity<>(createdDept, HttpStatus.CREATED);
     }
 
-//    @PostMapping("/notification")
-//    public ResponseEntity<List<Debt>> createNotification(@RequestBody NotificationDto notificationDto) {
-//        return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
-//    }
+    @PostMapping("/notification")
+    public ResponseEntity<List<Debt>> createNotification(@RequestBody NotificationDto notificationDto) {
+        return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Debt> updateDebt(@PathVariable("id") Long debtId,
