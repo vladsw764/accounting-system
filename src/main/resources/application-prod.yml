@@ -4,6 +4,9 @@ spring:
     url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
+  mail:
+    username: ${PROD_MAIL_USERNAME}
+    password: ${PROD_MAIL_PASSWORD}
 
 server:
   url: ${PROD_URL}
