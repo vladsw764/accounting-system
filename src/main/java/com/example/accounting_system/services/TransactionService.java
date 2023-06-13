@@ -40,6 +40,8 @@ public class TransactionService {
         if (transactionDto.getCategory().equals("outcome")) {
             checkTransactionAmount(transactionDto.getAmount());
             existTransaction.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
+        } else {
+            existTransaction.setAmount(transactionDto.getAmount());
         }
         existTransaction.setCategory(transactionDto.getCategory());
         existTransaction.setDate(transactionDto.getDate());
