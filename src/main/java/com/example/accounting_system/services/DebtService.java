@@ -112,4 +112,9 @@ public class DebtService {
         debt.setNotified(false);
         return debt;
     }
+
+    public Debt getDebtById(Long debtId) {
+        return debtRepository.findById(debtId)
+                .orElseThrow(() -> new RuntimeException("Debt not found with ID: " + debtId));
+    }
 }

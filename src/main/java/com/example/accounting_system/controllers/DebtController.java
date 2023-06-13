@@ -33,6 +33,11 @@ public class DebtController {
         return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Debt> getDebtById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(debtService.getDebtById(id));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Debt> updateDebt(@PathVariable("id") Long debtId,
                                            @RequestBody DebtDto debtDto) {
@@ -45,7 +50,7 @@ public class DebtController {
         return ResponseEntity.ok(debtService.getAllDebts());
     }
 
-    @GetMapping("/{debtId}")
+    @PostMapping("/{debtId}")
     public ResponseEntity<Payment> payDebt(@PathVariable("debtId") Long debtId,
                                            @RequestBody PaymentDto paymentDto) {
         Payment payment = paymentService.addPayment(debtId, paymentDto);
