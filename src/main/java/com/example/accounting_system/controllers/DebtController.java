@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/debt")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class DebtController {
     private final DebtService debtService;
     private final PaymentService paymentService;
@@ -25,6 +26,11 @@ public class DebtController {
         Debt createdDept = debtService.addDebt(debtDto);
         return new ResponseEntity<>(createdDept, HttpStatus.CREATED);
     }
+
+//    @PostMapping("/notification")
+//    public ResponseEntity<List<Debt>> createNotification(@RequestBody NotificationDto notificationDto) {
+//        return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Debt> updateDebt(@PathVariable("id") Long debtId,
