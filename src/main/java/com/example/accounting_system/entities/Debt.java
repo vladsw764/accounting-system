@@ -27,6 +27,7 @@ public class Debt {
     private BigDecimal returnAmount;
     private double periodicPayment;
     private boolean debtStatus; // true if the debt is closed
+    private boolean isNotified;
+    private String email;
     private String reminder;
-
 }
