@@ -97,5 +97,8 @@ public class TransactionService {
         }
     }
 
-
+    public Transaction getTransactionById(Long transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
+    }
 }
