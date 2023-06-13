@@ -33,7 +33,7 @@ public class DebtController {
         return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Debt> updateDebt(@PathVariable("id") Long debtId,
                                            @RequestBody DebtDto debtDto) {
         Debt updatedDebt = debtService.updateDebt(debtId, debtDto);
