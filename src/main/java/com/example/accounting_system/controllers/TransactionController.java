@@ -33,6 +33,11 @@ public class TransactionController {
         return ResponseEntity.ok(totalBalance);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Transaction> getTransactionById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(transactionService.getTransactionById(id));
+    }
+
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDto transactionDto) {
         Transaction createdTransaction = transactionService.addTransaction(transactionDto);
