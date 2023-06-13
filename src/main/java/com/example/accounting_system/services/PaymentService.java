@@ -35,6 +35,7 @@ public class PaymentService {
         debt.setReturnAmount(debt.getReturnAmount().subtract(payment.getAmount()));
         if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
             debt.setDebtStatus(true);
+            debt.setNotified(false);
         }
         debtRepository.save(debt);
 
@@ -67,6 +68,7 @@ public class PaymentService {
         updateDebtReturnAmount(debt, previousPaymentAmount, newPaymentAmount);
         if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
             debt.setDebtStatus(true);
+            debt.setNotified(false);
         }
         debtRepository.save(debt);
         return paymentRepository.save(payment);
