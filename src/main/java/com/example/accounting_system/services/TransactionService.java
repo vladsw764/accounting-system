@@ -23,30 +23,38 @@ public class TransactionService {
     private String url;
 
     public Transaction addTransaction(TransactionDto transactionDto) {
-        log.warn("check category of transaction");
-        if (transactionDto.getCategory().equals("outcome")) {
-            log.warn("check transaction amount");
+        Transaction transaction = convertToTransaction(transactionDto);
+        log.info("check transaction amount");
+        if (transactionDto.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             checkTransactionAmount(transactionDto.getAmount());
-            log.warn("multiply amount by 1");
-            transactionDto.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
+            transaction.setCategory("outcome");
+        } else {
+            transaction.setCategory("income");
         }
-        log.info("ready to save transaction");
-        return transactionRepository.save(convertToTransaction(transactionDto));
+        transactionDto.setAmount(transactionDto.getAmount());
+        return transactionRepository.save(transaction);
     }
 
     public Transaction updateTransaction(Long transactionId, TransactionDto transactionDto) {
         Transaction existTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
-        if (transactionDto.getCategory().equals("outcome")) {
+
+        if (transactionDto.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             checkTransactionAmount(transactionDto.getAmount());
-            existTransaction.setAmount(transactionDto.getAmount().multiply(BigDecimal.valueOf(-1)));
+            existTransaction.setCategory("outcome");
         } else {
-            existTransaction.setAmount(transactionDto.getAmount());
+            existTransaction.setCategory("income");
         }
-        existTransaction.setCategory(transactionDto.getCategory());
+        transactionDto.setAmount(transactionDto.getAmount());
+
         existTransaction.setDate(transactionDto.getDate());
         existTransaction.setComment(transactionDto.getComment());
         return transactionRepository.save(existTransaction);
+    }
+
+    public Transaction getTransactionById(Long transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
     }
 
     public List<Transaction> getAllTransactions() {
@@ -74,7 +82,6 @@ public class TransactionService {
     private Transaction convertToTransaction(TransactionDto transactionDto) {
         Transaction transaction = new Transaction();
         transaction.setDate(transactionDto.getDate());
-        transaction.setCategory(transactionDto.getCategory());
         transaction.setAmount(transactionDto.getAmount());
         transaction.setComment(transactionDto.getComment());
         return transaction;
@@ -94,13 +101,13 @@ public class TransactionService {
     public void checkTransactionAmount(BigDecimal transactionAmount) {
         BigDecimal totalBalance = getTotalBalance();
 
+        // multiply transaction amount by 1, if transaction amount less than 0
+        if (transactionAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            transactionAmount = transactionAmount.multiply(BigDecimal.valueOf(-1));
+        }
+
         if (totalBalance.compareTo(BigDecimal.ZERO) == 0 || transactionAmount.compareTo(totalBalance) > 0) {
             throw new RuntimeException("Invalid transaction amount");
         }
-    }
-
-    public Transaction getTransactionById(Long transactionId) {
-        return transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
     }
 }
