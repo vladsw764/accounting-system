@@ -1,6 +1,7 @@
 package com.example.accounting_system.controllers;
 
 import com.example.accounting_system.dtos.TransactionDto;
+import com.example.accounting_system.entities.Balance;
 import com.example.accounting_system.entities.Transaction;
 import com.example.accounting_system.services.DebtService;
 import com.example.accounting_system.services.PaymentService;
@@ -37,6 +38,11 @@ public class TransactionController {
     @GetMapping("/{id}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
+    }
+
+    @GetMapping("/balance-stats")
+    public ResponseEntity<List<Balance>> getBalanceStatistics() {
+        return ResponseEntity.ok(transactionService.getBalanceStatistics());
     }
 
     @PostMapping
