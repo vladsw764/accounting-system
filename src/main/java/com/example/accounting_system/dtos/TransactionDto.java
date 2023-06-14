@@ -12,7 +12,6 @@ import java.util.Date;
 public class TransactionDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
-    private String category;
     private BigDecimal amount;
     private String comment;
 }
