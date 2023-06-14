@@ -18,6 +18,13 @@ public class CategoryService {
 
     private final DebtRepository debtRepository;
 
+    /**
+     * Retrieves all transactions and debts for a given category.
+     *
+     * @param category the category to retrieve data for
+     * @return a list of transactions or debts for the category
+     * @throws RuntimeException if no data is found or if an invalid category is provided
+     */
     public List<Object> getTransactionsAndDebtsByCategory(String category) {
         List<Transaction> transactions = transactionRepository.findAllByCategory(category);
         List<Debt> debts = debtRepository.findAllByCategory(category);
