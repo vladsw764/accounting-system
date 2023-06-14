@@ -64,7 +64,7 @@ public class TransactionService {
         } else {
             existTransaction.setCategory("income");
         }
-        transactionDto.setAmount(transactionDto.getAmount());
+        existTransaction.setAmount(transactionDto.getAmount());
 
         existTransaction.setDate(transactionDto.getDate());
         existTransaction.setComment(transactionDto.getComment());
