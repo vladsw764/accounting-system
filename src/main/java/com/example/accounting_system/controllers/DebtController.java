@@ -6,6 +6,7 @@ import com.example.accounting_system.dtos.PaymentDto;
 import com.example.accounting_system.entities.Debt;
 import com.example.accounting_system.entities.Payment;
 import com.example.accounting_system.services.DebtService;
+import com.example.accounting_system.services.NotificationService;
 import com.example.accounting_system.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 @CrossOrigin("*")
 public class DebtController {
     private final DebtService debtService;
+    private final NotificationService notificationService;
     private final PaymentService paymentService;
 
     @PostMapping
@@ -30,7 +32,13 @@ public class DebtController {
 
     @PostMapping("/notification")
     public ResponseEntity<List<Debt>> createNotification(@RequestBody NotificationDto notificationDto) {
-        return new ResponseEntity<>(debtService.createNotification(notificationDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(notificationService.createNotifications(notificationDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{debtId}/notification")
+    public ResponseEntity<Debt> enableNotification(@PathVariable("debtId") Long debtId, @RequestBody NotificationDto notificationDto) {
+        Debt debt = notificationService.enableNotification(debtId, notificationDto);
+        return ResponseEntity.ok(debt);
     }
 
     @GetMapping("/{id}")
