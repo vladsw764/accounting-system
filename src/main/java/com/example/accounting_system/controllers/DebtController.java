@@ -65,6 +65,11 @@ public class DebtController {
         return new ResponseEntity<>(payment, HttpStatus.CREATED);
     }
 
+    @GetMapping("/payments")
+    public ResponseEntity<List<Payment>> getAllPayments() {
+        return ResponseEntity.ok(paymentService.getAllPayments());
+    }
+
     @PutMapping("/{debtId}/{paymentId}")
     public ResponseEntity<Payment> updatePaymentInformation(@PathVariable("debtId") Long debtId,
                                                             @PathVariable("paymentId") Long paymentId,

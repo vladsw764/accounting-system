@@ -31,7 +31,7 @@ public class PaymentService {
         Debt debt = debtRepository.findById(debtId)
                 .orElseThrow(() -> new RuntimeException("Debt not found with ID: " + debtId));
 
-        checkReturnAmount(paymentDto.getAmount(), debt.getReturnAmount());
+        checkReturnAmount(paymentDto.getAmount(), debt.getReturnAmount()); // check if balance is enough
 
         // Create a new payment
         Payment payment = new Payment();
@@ -40,6 +40,7 @@ public class PaymentService {
         payment.setAmount(paymentDto.getAmount());
 
         debt.setReturnAmount(debt.getReturnAmount().subtract(payment.getAmount()));
+
         if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
             debt.setDebtStatus(true);
             debt.setNotified(false);
@@ -83,15 +84,22 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + paymentId));
 
         validatePaymentBelongsToDebt(payment, debt);
+
         BigDecimal previousPaymentAmount = payment.getAmount();
+
         updatePaymentFields(payment, paymentDto);
+
         BigDecimal newPaymentAmount = payment.getAmount();
+
         updateDebtReturnAmount(debt, previousPaymentAmount, newPaymentAmount);
+
         if (debt.getReturnAmount().compareTo(BigDecimal.ZERO) <= 0) {
             debt.setDebtStatus(true);
             debt.setNotified(false);
         }
+
         debtRepository.save(debt);
+
         return paymentRepository.save(payment);
     }
 
@@ -146,4 +154,7 @@ public class PaymentService {
         debt.setReturnAmount(newReturnAmount);
     }
 
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
+    }
 }
