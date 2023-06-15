@@ -157,4 +157,8 @@ public class PaymentService {
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
+
+    public List<Payment> getPaymentByDebtId(Long debtId) {
+        return paymentRepository.findAllByDebtId(debtId);
+    }
 }
