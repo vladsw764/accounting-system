@@ -105,9 +105,9 @@ public class DebtService {
     }
 
     /**
-     * Scheduled task that sends debt reminders by email every day at 9 AM.
+     * Scheduled task that sends debt reminders by email every 10 minutes.
      */
-    @Scheduled(cron = "0 0 9 * * *") // Run every day at 9 AM
+    @Scheduled(cron = "0 */10 * * * *") // Run every 10 minutes
     public void sendDebtReminders() {
         List<Debt> debts = debtRepository.findAll();
         Date currentDate = new Date();
